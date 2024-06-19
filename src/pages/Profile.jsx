@@ -1,32 +1,17 @@
 import { getAuth, updateProfile } from "firebase/auth";
-import {
-  collection,
-  doc,
-  orderBy,
-  query,
-  updateDoc,
-  getDocs,
-  where,
-  deleteDoc,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { db } from "../firebase";
-import { RiHome3Line } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
-import ListingItem from "../components/ListingItem";
 
 export default function Profile() {
   const auth = getAuth();
   const [changeDetail, setChangeDetail] = useState(false);
-  const [listings, setListings] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
   });
-  const navigate = useNavigate();
   const { name, email } = formData;
   function onChange(e) {
     setFormData((prevState) => ({
@@ -54,46 +39,7 @@ export default function Profile() {
       toast.error("Could not update the profile details");
     }
   }
-  useEffect(() => {
-    async function fetchUserListings() {
-      const listingRef = collection(db, "listings");
-      const q = query(
-        listingRef,
-        where("userRef", "==", auth.currentUser.uid),
-        orderBy("timestamp", "desc")
-      );
-      const querySnap = await getDocs(q);
-      let listings = [];
-      querySnap.forEach((doc) => {
-        return listings.push({
-          id: doc.id,
-          data: doc.data(),
-        });
-      });
-      setListings(listings);
-      setLoading(false);
-    }
-    fetchUserListings();
-  }, [auth.currentUser.uid]);
-  async function onDelete(listingID){
-    if(window.confirm("Are you sure you want to delete this listing?")) {
-      await deleteDoc(doc(db, "listings", listingID));
-      setListings((prevState) => prevState.filter((listing) => listing.id !== listingID));
-      toast.success("Listing Deleted", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
-  }
-  function onEdit(listingID){
-    navigate(`/Edit-Listing/${listingID}`)
-  }
+
   return (
     <>
       <h1 className="text-3xl text-center mt-6 font-bold">Profile</h1>
@@ -137,34 +83,7 @@ export default function Profile() {
             Sign Out
           </Link>
         </div>
-        <Link></Link>
-        <button
-          type="submit"
-          className="w-full px-4 py-2 text-xl flex justify-center items-center gap-3 text-white bg-black rounded-xl border-none shadow-lg hover:text-black hover:bg-white transition duration-200 ease-in-out"
-          onClick={() => navigate("/Create-Listing")}
-        >
-          <RiHome3Line className="text-2xl" />
-          Sell or Rent your Home
-        </button>
       </form>
-      <div>
-        {!loading && listings.length > 0 && (
-          <>
-            <h2 className="text-3xl text-center mt-6 font-bold">My Listings</h2>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 m-12">
-              {listings.map((listing) => (
-                <ListingItem
-                  key={listing.id}
-                  id={listing.id}
-                  listing={listing.data}
-                  onDelete={() => onDelete(listing.id)}
-                  onEdit={() => onEdit(listing.id)}
-                />
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
     </>
   );
 }
