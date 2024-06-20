@@ -1,127 +1,73 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import Moment from "react-moment";
-import { IoLocationSharp } from "react-icons/io5";
-import { FaPencil } from "react-icons/fa6";
-import { MdDelete } from "react-icons/md";
-export default function ListingItem({ listing, id, onDelete, onEdit }) {
-  const [hovered, setHovered] = useState(false);
-  const handleHover = () => {
-    if (listing.imgUrls.length > 1) {
-      setHovered(true);
-    }
-  };
+import React from "react";
+import product1 from "../assets/product.jpeg";
+import product2 from "../assets/product.jpeg";
 
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
+const ServiceItem = ({ image, description, price, ratings, purchaseLink }) => {
   return (
-    <div>
-      <li className="bg-white p-2 rounded-xl relative overflow-hidden ">
-        <Link to={`/category/${listing.type}/${id}`}>
-          <img
-            src={
-              hovered && listing.imgUrls.length > 1
-                ? listing.imgUrls[1]
-                : listing.imgUrls[0]
-            }
-            alt="property pics"
-            loading="lazy"
-            className="rounded-xl h-[250px] w-full object-cover transition ease-in-out transform hover: duration-300"
-            onMouseEnter={handleHover}
-            onMouseLeave={handleMouseLeave}
-          />
-
-          <Moment
-            className="absolute top-2 left-2 bg-black text-white font-semibold p-2 rounded-tl-lg border border-gray-300 rounded-br-lg text-xs"
-            fromNow
-          >
-            {listing.timestamp?.toDate()}
-          </Moment>
-          <div className="mt-2">
-            <div className="flex items-center gap-2">
-              <IoLocationSharp className="text-green-600" />
-              <p className="text-sm text-lime-700 font-semibold">
-                {listing.address}
-              </p>
-            </div>
-            <p className="text-lg font-semibold">{listing.name}</p>
-            {/* <p>{listing.description}</p> */}
-            {listing.type === "sell" ? (
-              <p className="absolute top-[224px] right-2 bg-red-500 text-white font-semibold p-2 rounded-tl-lg border border-gray-300 rounded-br-lg text-xs">
-                For Sale
-              </p>
-            ) : (
-              <p className="absolute top-[224px] right-2 bg-red-500 text-white font-semibold p-2 rounded-tl-lg border border-gray-300 rounded-br-lg text-xs">
-                For Rent
-              </p>
-            )}
-            {listing.type === "sell" ? (
-              listing.offer ? (
-                <p className="text-2xl font-extrabold text-blue-600">
-                  $
-                  {listing.discountedPrice
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </p>
-              ) : (
-                <p className="text-2xl font-extrabold text-blue-600">
-                  $
-                  {listing.regularPrice
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </p>
-              )
-            ) : listing.offer ? (
-              <div className="flex items-end gap-1">
-                <p className="text-2xl font-extrabold text-blue-600">
-                  $
-                  {listing.regularPrice
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </p>
-                <p className="text-md font-semibold">/Month</p>
-              </div>
-            ) : (
-              <div className="flex items-end gap-1">
-                <p className="text-2xl font-extrabold text-blue-600">
-                  $
-                  {listing.regularPrice
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </p>
-                <p className="text-md font-semibold">/Month</p>
-              </div>
-            )}
-          </div>
-          <div className="flex gap-4 font-semibold ">
-            <div>
-              <p>{listing.bedroom > 1 ? `${listing.bedroom} Beds` : `1 Bed`}</p>
-            </div>
-            <div>
-              <p>
-                {listing.bathroom > 1 ? `${listing.bathroom} Baths` : `1 Bath`}
-              </p>
-            </div>
-          </div>
-        </Link>
-        <div className="flex items-center gap-3 absolute bottom-3 right-4">
-          {onDelete && (
-            <FaPencil
-              className=" text-lg text-blue-700"
-              onClick={() =>  onEdit(listing.id)}
-              cursor={"pointer"}
-            />
-          )}
-          {onEdit && (
-            <MdDelete
-              className=" text-2xl text-red-700"
-              onClick={() => onDelete(listing.id)}
-              cursor={"pointer"}
-            />
-          )}
-        </div>
-      </li>
+    <div id="product-card" className="m-auto flex flex-col gap-3">
+      <img
+        src={image}
+        alt="Product"
+        className="h-[363px] w-[277px] rounded-2xl"
+      />
+      <p id="product-description" className="text-sm mb w-[250px]" dangerouslySetInnerHTML={{ __html: description }}>
+      </p>
+      <p className="text-sm">₹{price}</p>
+      <button
+        id="purchase-button"
+        onClick={() => (window.location.href = purchaseLink)}
+        className="w-full px-4 py-2 text-xl text-black bg-white rounded-3xl border-2 border-black hover:text-white hover:bg-[#2E7E36] transition duration-200 ease-in-out"
+      >
+        Buy Now
+      </button>
     </div>
   );
-}
+};
+
+const ServicesSection = () => {
+  const servicesData = [
+    {
+      image: product1,
+      description: `Bamboo Toothbrush Standard Adult <br> (Pack of 1)`,
+      price: 149,
+      purchaseLink: 'https://buy.stripe.com/test_8wMaGMbQweiL5A4bIL',
+    },
+    {
+      image: product2,
+      description: `Bamboo Toothbrush Standard Adult <br> (Pack of 2)`,
+      price: 149,
+      purchaseLink: `https://buy.stripe.com/test_8wMaGMbQweiL5A4bIL`,
+    },
+    {
+      image: "https://img.freepik.com/free-photo/natural-products-green-background_23-2149413924.jpg?w=740&t=st=1708127555~exp=1708128155~hmac=5d9d03408947141b7df7f4e7b679d47dececce532d73b42001d7b7bade43ee77",
+      description: `Bamboo Toothbrush Standard Adult <br> (Pack of 3)`,
+      price: 199,
+      purchaseLink: `https://buy.stripe.com/test_4gw6qwg6M5MfbYs9AE`,
+    },
+    {
+      image: "https://img.freepik.com/free-photo/assortment-with-toothbrush-container_23-2148743101.jpg?w=740&t=st=1708127850~exp=1708128450~hmac=94ff1f5180ded1615ffcc5cfb60114aacff6493396441dca22e8d556ad393972",
+      description: `Bamboo Toothbrush Standard Adult <br> (Pack of 4)`,
+      price: 199,
+      purchaseLink: `https://buy.stripe.com/test_4gw6qwg6M5MfbYs9AE`,
+    },
+  ];
+
+  return (
+    <div  id="shop">
+      <h1 className="">PRODUCT GALLERY</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-16 my-20">
+        {servicesData.map((service, index) => (
+          <ServiceItem
+            key={index}
+            image={service.image}
+            description={service.description}
+            price={service.price}
+            purchaseLink={service.purchaseLink}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ServicesSection;
